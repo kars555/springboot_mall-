@@ -13,7 +13,7 @@ public class ProductRowMapper implements RowMapper<Product> {
     @Override
     public Product mapRow(ResultSet resultSet, int i) throws SQLException {
 
-        Product product = new Product() ;
+        Product product = new Product();
         product.setProduct_id(resultSet.getInt("product_id"));
         product.setProduct_name(resultSet.getString("product_name"));
 
@@ -29,6 +29,6 @@ public class ProductRowMapper implements RowMapper<Product> {
         product.setCreated_date(resultSet.getTimestamp("created_date"));
         product.setLast_modified_date(resultSet.getTimestamp("last_modified_date"));
 
-        return product ;
+        return product;
     }
 }
