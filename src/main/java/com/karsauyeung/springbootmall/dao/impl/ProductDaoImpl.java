@@ -1,13 +1,18 @@
 package com.karsauyeung.springbootmall.dao.impl;
 
 import com.karsauyeung.springbootmall.dao.ProductDao;
+import com.karsauyeung.springbootmall.dlto.ProductRequest;
 import com.karsauyeung.springbootmall.model.Product;
 import com.karsauyeung.springbootmall.rowmapper.ProductRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import javax.lang.model.element.Name;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,4 +42,32 @@ public class ProductDaoImpl implements ProductDao {
         else {return null ; }
 
     }
-}
+
+    @Override
+    public Integer createProduct(ProductRequest productRequest) {
+            String sql = "INSERT INTO product(product_name, category, image_url, price, stock, " +
+                    "description, created_date, last_modified_date) " +
+                    "VALUES (:productName, :category, :imageUrl, :price, :stock, :description, " +
+                    ":createdDate, :lastModifiedDate)";
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("productName", productRequest.getProduct_name());
+            map.put("category", productRequest.getCategory().toString()); // convert enum type into string for storage
+            map.put("imageUrl", productRequest.getImage_url());
+            map.put("price", productRequest.getPrice());
+            map.put("stock", productRequest.getStock());
+            map.put("description", productRequest.getDescription());
+
+            Date now = new Date();
+            map.put("createdDate", now);
+            map.put("lastModifiedDate", now);
+
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+
+            namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map), keyHolder);
+
+            int productId = keyHolder.getKey().intValue();
+
+            return productId;
+        }
+    }

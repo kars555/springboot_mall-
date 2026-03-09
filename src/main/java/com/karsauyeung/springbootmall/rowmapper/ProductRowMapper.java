@@ -19,7 +19,7 @@ public class ProductRowMapper implements RowMapper<Product> {
 
         //convert string from database to ProductCategory data type (enum)
         String categorystr = resultSet.getString("category");
-        ProductCategory productCategory = ProductCategory.valueOf(categorystr);
+        ProductCategory productCategory = ProductCategory.valueOf(categorystr); // convert string to enum to pass to frontend
         product.setCategory(productCategory);
 
         product.setImage_url(resultSet.getString("image_url"));
