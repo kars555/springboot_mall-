@@ -10,11 +10,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class ProductController  {
     @Autowired
     private ProductService productService ;
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getProducts(){
+
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProducts()) ;
+    }
 
     @GetMapping("/products/{productID}")
     public ResponseEntity<Product> getProductById(@PathVariable Integer productID){
@@ -54,7 +60,7 @@ public class ProductController  {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductById(productID));
     }
 
-    @DeleteMapping("/products/${productID}")
+    @DeleteMapping("/products/{productID}")
     public ResponseEntity<?> deleteProductById(@PathVariable Integer productID){
 
         productService.deleteProductById(productID) ;
