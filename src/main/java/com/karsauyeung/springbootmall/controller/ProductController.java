@@ -37,4 +37,28 @@ public class ProductController  {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
+
+    @PutMapping("/products/{$productID}")
+    public ResponseEntity<Product> updateProductById(@PathVariable Integer productID ,
+                                                     @RequestBody @Valid ProductRequest productRequest) {
+
+        // check whether product exists or not
+
+        Product product = productService.getProductById(productID);
+
+        if (productID == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        productService.updateProductById(productID , productRequest) ;
+
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductById(productID));
+    }
+
+    @DeleteMapping("/products/${productID}")
+    public ResponseEntity<?> deleteProductById(@PathVariable Integer productID){
+
+        productService.deleteProductById(productID) ;
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }
