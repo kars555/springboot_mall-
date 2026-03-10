@@ -6,6 +6,8 @@ import org.springframework.lang.NonNull;
 import javax.validation.constraints.NotNull;
 
 public class ProductRequest {
+
+    //when create a new product , the following field cannot be null
     @NotNull
     private String product_name ;
     @NotNull
