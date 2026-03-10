@@ -2,6 +2,7 @@ package com.karsauyeung.springbootmall.dao.impl;
 
 import com.karsauyeung.springbootmall.dao.ProductDao;
 import com.karsauyeung.springbootmall.dlto.ProductRequest;
+import com.karsauyeung.springbootmall.dlto.RequestParameter;
 import com.karsauyeung.springbootmall.model.Product;
 import com.karsauyeung.springbootmall.rowmapper.ProductRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.lang.model.element.Name;
 import java.util.Date;
@@ -25,10 +27,20 @@ public class ProductDaoImpl implements ProductDao {
 
 
     @Override
-    public List<Product> getProducts() {
+    public List<Product> getProducts(RequestParameter requestParameter) {
         String sql = "SELECT product_id, product_name, category, image_url, price, stock, description, created_date, last_modified_date " +
-                    "FROM product " ;
+                    "FROM product where 1=1" ;
         Map<String , Object > map = new HashMap<>() ;
+        if (requestParameter.getCategory()!=null){
+            sql += " AND category = :category" ;
+            map.put("category" , requestParameter.getCategory().name()) ;
+
+        }
+        if (requestParameter.getSearch() != null) {
+            sql += " AND product_name LIKE :search";
+            map.put("search" , "%" + requestParameter.getSearch() +"%") ;
+        }
+
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
         return productList ;
     }

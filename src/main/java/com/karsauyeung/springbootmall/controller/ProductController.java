@@ -1,10 +1,13 @@
 package com.karsauyeung.springbootmall.controller;
 
 
+import com.karsauyeung.springbootmall.constant.ProductCategory;
 import com.karsauyeung.springbootmall.dlto.ProductRequest;
+import com.karsauyeung.springbootmall.dlto.RequestParameter;
 import com.karsauyeung.springbootmall.model.Product;
 import com.karsauyeung.springbootmall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +19,15 @@ import java.util.List;
 public class ProductController  {
     @Autowired
     private ProductService productService ;
-    @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts(){
 
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getProducts()) ;
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getProducts(@RequestParam (required = false) ProductCategory category , @RequestParam (required = false) String search
+    ){
+        RequestParameter requestParameter  = new RequestParameter() ;
+        requestParameter.setSearch(search);
+        requestParameter.setCategory(category);
+
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProducts(requestParameter)) ;
     }
 
     @GetMapping("/products/{productID}")

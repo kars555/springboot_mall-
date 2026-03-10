@@ -2,6 +2,7 @@ package com.karsauyeung.springbootmall.service.impl;
 
 import com.karsauyeung.springbootmall.dao.ProductDao;
 import com.karsauyeung.springbootmall.dlto.ProductRequest;
+import com.karsauyeung.springbootmall.dlto.RequestParameter;
 import com.karsauyeung.springbootmall.model.Product;
 import com.karsauyeung.springbootmall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProducts() {
-        return productDao.getProducts();
+    public List<Product> getProducts(RequestParameter requestParameter) {
+        return productDao.getProducts(requestParameter);
     }
 }
