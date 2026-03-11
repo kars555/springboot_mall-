@@ -10,11 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
+@Validated
 @RestController
 public class ProductController  {
     @Autowired
@@ -24,13 +28,17 @@ public class ProductController  {
     public ResponseEntity<List<Product>> getProducts(@RequestParam (required = false) ProductCategory category ,
                                                      @RequestParam (required = false) String search ,
                                                      @RequestParam (defaultValue = "created_date") String order_by ,
-                                                     @RequestParam (defaultValue = "DESC") String sort
+                                                     @RequestParam (defaultValue = "DESC") String sort ,
+                                                     @RequestParam (defaultValue = "5") @Min(0) @Max(100)Integer limit ,
+                                                     @RequestParam (defaultValue = "0") @Min(0) Integer offset
     ){
         RequestParameter requestParameter  = new RequestParameter() ;
         requestParameter.setSearch(search);
         requestParameter.setCategory(category);
         requestParameter.setSort(sort);
         requestParameter.setOrder_by(order_by);
+        requestParameter.setLimit(limit);
+        requestParameter.setOffset(offset);
 
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProducts(requestParameter)) ;
     }
