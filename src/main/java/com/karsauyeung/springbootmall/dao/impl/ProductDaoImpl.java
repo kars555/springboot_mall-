@@ -5,6 +5,7 @@ import com.karsauyeung.springbootmall.dlto.ProductRequest;
 import com.karsauyeung.springbootmall.dlto.RequestParameter;
 import com.karsauyeung.springbootmall.model.Product;
 import com.karsauyeung.springbootmall.rowmapper.ProductRowMapper;
+import com.karsauyeung.springbootmall.util.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -25,6 +26,27 @@ public class ProductDaoImpl implements ProductDao {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate ;
 
+    @Override
+    public Integer getCounts(RequestParameter requestParameter) {
+        String sql = "SELECT COUNT(*) FROM product WHERE 1=1" ;
+
+        //filtering 條件
+        Map<String , Object > map = new HashMap<>() ;
+        if (requestParameter.getCategory()!=null){
+            sql += " AND category = :category" ;
+            map.put("category" , requestParameter.getCategory().name()) ;
+
+        }
+        if (requestParameter.getSearch() != null) {
+            sql += " AND product_name LIKE :search";
+            map.put("search" , "%" + requestParameter.getSearch() +"%") ;
+        }
+
+        Integer count = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+
+        return count ;
+
+    }
 
     @Override
     public List<Product> getProducts(RequestParameter requestParameter) {
@@ -48,6 +70,8 @@ public class ProductDaoImpl implements ProductDao {
 
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
+
+
         return productList ;
     }
 

@@ -6,6 +6,7 @@ import com.karsauyeung.springbootmall.dlto.ProductRequest;
 import com.karsauyeung.springbootmall.dlto.RequestParameter;
 import com.karsauyeung.springbootmall.model.Product;
 import com.karsauyeung.springbootmall.service.ProductService;
+import com.karsauyeung.springbootmall.util.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Validated
 @RestController
@@ -25,12 +28,12 @@ public class ProductController  {
     private ProductService productService ;
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts(@RequestParam (required = false) ProductCategory category ,
-                                                     @RequestParam (required = false) String search ,
-                                                     @RequestParam (defaultValue = "created_date") String order_by ,
-                                                     @RequestParam (defaultValue = "DESC") String sort ,
-                                                     @RequestParam (defaultValue = "5") @Min(0) @Max(100)Integer limit ,
-                                                     @RequestParam (defaultValue = "0") @Min(0) Integer offset
+    public ResponseEntity<Page<Product>> getProducts(@RequestParam (required = false) ProductCategory category ,
+                                                              @RequestParam (required = false) String search ,
+                                                              @RequestParam (defaultValue = "created_date") String order_by ,
+                                                              @RequestParam (defaultValue = "DESC") String sort ,
+                                                              @RequestParam (defaultValue = "5") @Min(0) @Max(100)Integer limit ,
+                                                              @RequestParam (defaultValue = "0") @Min(0) Integer offset
     ){
         RequestParameter requestParameter  = new RequestParameter() ;
         requestParameter.setSearch(search);
@@ -40,7 +43,14 @@ public class ProductController  {
         requestParameter.setLimit(limit);
         requestParameter.setOffset(offset);
 
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getProducts(requestParameter)) ;
+        Page<Product> page = new Page<>();
+        page.setLimit(limit);
+        page.setOffset(offset);
+        page.setResult(productService.getProducts(requestParameter));
+        // know how many amount of product fit the query requirement (search and category) and return for frontend to calculate the page number
+        page.setTotal(productService.getCount(requestParameter));
+
+        return ResponseEntity.status(HttpStatus.OK).body(page) ;
     }
 
     @GetMapping("/products/{productID}")
